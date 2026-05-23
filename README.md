@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# مولّد الاختبارات الذكي 🧠
 
-## Getting Started
+تطبيق ويب يحوّل ملاحظاتك الدراسية إلى اختبار تفاعلي من 10 أسئلة اختيار من متعدد، باستخدام الذكاء الاصطناعي. الصق نصاً أو ارفع ملف PDF، واحصل على اختبار فوري مع تصحيح وشرح للإجابات.
 
-First, run the development server:
+🔗 **النسخة المنشورة:** [ai-quiz-genv1.vercel.app](https://ai-quiz-genv1.vercel.app)
+
+---
+
+## ✨ المميزات
+
+- **توليد ذكي للأسئلة** — يحلّل المحتوى وينشئ 10 أسئلة اختيار من متعدد عبر Google Gemini.
+- **رفع ملفات PDF** — استخراج النص تلقائياً من ملف PDF (حتى 10 صفحات).
+- **اختبار تفاعلي** — شريط تقدّم، تنقّل بين الأسئلة، وحساب فوري للنتيجة.
+- **مراجعة الأخطاء** — عرض الإجابات الخاطئة مع الإجابة الصحيحة وشرحها.
+- **تخزين مؤقت (Cache)** — حفظ نتائج التوليد لتقليل استدعاءات الـ API وتسريع الاستجابة.
+- **نظام احتياطي (Fallback)** — يستمر التطبيق بالعمل عند فشل أو تجاوز حدود الـ API.
+- **واجهة عربية بالكامل** — تصميم RTL متجاوب يدعم الوضع الفاتح والداكن.
+
+---
+
+## 🛠️ التقنيات المستخدمة
+
+| المجال | التقنية |
+|--------|---------|
+| الإطار | Next.js (App Router) |
+| اللغة | TypeScript |
+| الذكاء الاصطناعي | Google Gemini API |
+| التنسيق | Tailwind CSS |
+| الاستضافة | Vercel |
+
+---
+
+## 🚀 التشغيل محلياً
+
+### المتطلبات
+
+- Node.js نسخة 18 أو أحدث
+- مفتاح Google Gemini API 
+
+### الخطوات
 
 ```bash
+# 1. استنساخ المستودع
+git clone https://github.com/USERNAME/ai-quiz-gen.git
+cd ai-quiz-gen
+
+# 2. تثبيت الحزم
+npm install
+
+# 3. إعداد متغيرات البيئة
+cp .env.example .env.local
+# ثم افتح .env.local وأضف مفتاح Gemini
+
+# 4. تشغيل خادم التطوير
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+افتح [http://localhost:3000](http://localhost:3000) في المتصفح.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔑 متغيرات البيئة
 
-## Learn More
+أنشئ ملف `.env.local` في جذر المشروع وأضف:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> ⚠️ لا تشارك هذا الملف ولا ترفعه إلى Git — مفتاح الـ API سرّي. الملف مستثنى أصلاً في `.gitignore`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📦 النشر على Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. ارفع المشروع إلى مستودع على GitHub.
+2. من [vercel.com/new](https://vercel.com/new)، استورد المستودع.
+3. في قسم **Environment Variables**، أضف `GEMINI_API_KEY` بقيمته.
+4. اضغط **Deploy**.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+بعد الربط، كل `git push` إلى الفرع الرئيسي ينشر نسخة محدّثة تلقائياً.
+
+---
+
+## 📂 بنية المشروع
+
+```
+ai-quiz-gen/
+├── app/
+│   ├── api/
+│   │   ├── generate-quiz/   # توليد الأسئلة عبر Gemini
+│   │   └── extract-pdf/     # استخراج النص من PDF
+│   ├── layout.tsx           # التخطيط العام (RTL + الخطوط)
+│   ├── page.tsx             # الواجهة الرئيسية
+│   └── globals.css
+├── .env.example
+└── README.md
+```
+
+---
+
+## 📖 كيفية الاستخدام
+
+1. الصق ملاحظاتك في حقل النص (100 حرف على الأقل) أو ارفع ملف PDF.
+2. اضغط **توليد الاختبار** وانتظر بضع ثوانٍ.
+3. أجب عن الأسئلة العشرة واحداً تلو الآخر.
+4. راجع نتيجتك، واطّلع على شرح الإجابات الخاطئة.
+5. اختر **إعادة بأسئلة جديدة** أو ابدأ **اختبار جديد** بمحتوى مختلف.
+
+---
+
+## 📝 الرخصة
+
+هذا المشروع مفتوح المصدر للاستخدام التعليمي.
+
+---
+
+صُنع بواسطة Taif — 2026
