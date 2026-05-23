@@ -100,31 +100,38 @@ export async function POST(request: NextRequest) {
     // الوضع 1: توليد الاختبار مباشرة من PDF
     // ============================================================
     if (mode === "quiz") {
-      const prompt = `أنت معلم خبير. اقرأ هذا الملف وولّد اختباراً من 10 أسئلة اختيار من متعدد بناءً على محتواه.
+      const prompt = `You are an expert teacher. Read this file and generate a 10-question multiple-choice quiz based on its content.
 
-قواعد مهمة:
-- ولّد 10 أسئلة بالضبط
-- كل سؤال له 4 خيارات
-- إجابة واحدة صحيحة فقط لكل سؤال
-- استخدم نفس لغة المحتوى (عربي أو إنجليزي)
-- نوّع بين أسئلة الفهم والتطبيق والتحليل
-- اجعل الخيارات الخاطئة منطقية ومُقنعة
-- لكل سؤال، اكتب شرحاً واضحاً
+🔴 LANGUAGE RULE — THIS IS THE MOST IMPORTANT RULE, READ IT FIRST:
+- Detect the PRIMARY language of the file's content.
+- If the file is primarily English → write the ENTIRE quiz (every question, every option, every explanation) in English.
+- If the file is primarily Arabic → write the ENTIRE quiz in Arabic.
+- Match the file's language EXACTLY. NEVER translate the content into a different language.
+- Keep technical terms, scientific names, and proper nouns in their ORIGINAL language. If the file is Arabic but contains an English scientific term, keep that term in English inside the Arabic question and answer.
+- The language of these instructions has NOTHING to do with the output language. Output language depends ONLY on the file's content.
+
+قواعد مهمة (Important rules):
+- ولّد 10 أسئلة بالضبط (generate exactly 10 questions)
+- كل سؤال له 4 خيارات (4 options per question)
+- إجابة واحدة صحيحة فقط لكل سؤال (only one correct answer)
+- نوّع بين أسئلة الفهم والتطبيق والتحليل (vary between comprehension, application, and analysis)
+- اجعل الخيارات الخاطئة منطقية ومُقنعة (make wrong options plausible)
+- لكل سؤال، اكتب شرحاً واضحاً (write a clear explanation for each)
 - إذا كان الملف لا يحتوي على نص كافٍ لتوليد أسئلة (مثلاً صور فقط)، أرجع: {"error": "NO_TEXT_CONTENT"}
 
-أرجع النتيجة بصيغة JSON:
+Return the result as JSON:
 {
   "questions": [
     {
-      "question": "نص السؤال",
-      "options": ["خيار1", "خيار2", "خيار3", "خيار4"],
+      "question": "question text",
+      "options": ["option 1", "option 2", "option 3", "option 4"],
       "correctAnswer": 0,
-      "explanation": "شرح الإجابة"
+      "explanation": "explanation of the correct answer"
     }
   ]
 }
 
-correctAnswer رقم من 0 إلى 3.`;
+Note: correctAnswer is a number from 0 to 3.`;
 
       const responseText = await callGeminiWithFallback(
         [
@@ -176,8 +183,10 @@ correctAnswer رقم من 0 إلى 3.`;
       await callGeminiWithFallback([
         { inlineData: { data: base64Data, mimeType: "application/pdf" } },
         {
-          text: `استخرج كل النص من هذا الملف بدقة. اكتب النص العربي متصلاً.
-إذا كان الملف لا يحتوي على نص قابل للاستخراج (صور ممسوحة ضوئياً فقط)، اكتب فقط: NO_TEXT_CONTENT`,
+          text: `Extract ALL text from this file accurately and completely.
+- Preserve the text in its ORIGINAL language exactly as it appears. Do NOT translate anything.
+- If the text is Arabic, keep it as continuous, connected Arabic text.
+- If the file has no extractable text (scanned images only), respond with only: NO_TEXT_CONTENT`,
         },
       ])
     ).trim();

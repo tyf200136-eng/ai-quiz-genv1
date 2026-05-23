@@ -39,33 +39,40 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const prompt = `أنت معلم خبير. اقرأ المحتوى التالي وولّد اختباراً من 10 أسئلة اختيار من متعدد.
+    const prompt = `You are an expert teacher. Read the content below and generate a 10-question multiple-choice quiz.
 
-قواعد مهمة:
-- ولّد 10 أسئلة بالضبط
-- كل سؤال له 4 خيارات
-- إجابة واحدة صحيحة فقط لكل سؤال
-- الأسئلة مستندة فقط على المحتوى المُقدَّم
-- استخدم نفس لغة المحتوى (عربي أو إنجليزي)
-- نوّع بين أسئلة الفهم والتطبيق والتحليل
-- اجعل الخيارات الخاطئة منطقية ومُقنعة
-- لكل سؤال، اكتب شرحاً واضحاً لماذا الإجابة الصحيحة صحيحة
+🔴 LANGUAGE RULE — THIS IS THE MOST IMPORTANT RULE, READ IT FIRST:
+- Detect the PRIMARY language of the study content provided below.
+- If the content is primarily English → write the ENTIRE quiz (every question, every option, every explanation) in English.
+- If the content is primarily Arabic → write the ENTIRE quiz in Arabic.
+- Match the content's language EXACTLY. NEVER translate the content into a different language.
+- Keep technical terms, scientific names, and proper nouns in their ORIGINAL language. If the content is Arabic but contains an English scientific term, keep that term in English inside the Arabic question and answer.
+- The language of these instructions has NOTHING to do with the output language. Output language depends ONLY on the content below.
 
-أرجع النتيجة بصيغة JSON بهذا الشكل تماماً:
+قواعد مهمة (Important rules):
+- ولّد 10 أسئلة بالضبط (generate exactly 10 questions)
+- كل سؤال له 4 خيارات (4 options per question)
+- إجابة واحدة صحيحة فقط لكل سؤال (only one correct answer)
+- الأسئلة مستندة فقط على المحتوى المُقدَّم (base questions only on the provided content)
+- نوّع بين أسئلة الفهم والتطبيق والتحليل (vary between comprehension, application, and analysis)
+- اجعل الخيارات الخاطئة منطقية ومُقنعة (make wrong options plausible)
+- لكل سؤال، اكتب شرحاً واضحاً (write a clear explanation for each)
+
+Return the result as JSON in exactly this structure:
 {
   "questions": [
     {
-      "question": "نص السؤال",
-      "options": ["الخيار الأول", "الخيار الثاني", "الخيار الثالث", "الخيار الرابع"],
+      "question": "question text",
+      "options": ["option 1", "option 2", "option 3", "option 4"],
       "correctAnswer": 0,
-      "explanation": "شرح لماذا الإجابة الصحيحة"
+      "explanation": "explanation of the correct answer"
     }
   ]
 }
 
-ملاحظة: correctAnswer هو رقم من 0 إلى 3 يمثل فهرس الإجابة الصحيحة.
+Note: correctAnswer is a number from 0 to 3 representing the index of the correct answer.
 
-المحتوى:
+المحتوى (Content):
 """
 ${truncatedNotes}
 """`;
